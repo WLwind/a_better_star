@@ -9,7 +9,7 @@ namespace a_better_star
 class Expander {
     public:
         Expander(PotentialCalculator* p_calc, int nx, int ny) :
-                unknown_(false), lethal_cost_(210), neutral_cost_(20), factor_(3.0), p_calc_(p_calc) {
+                unknown_(false), lethal_cost_(253), neutral_cost_(5), factor_(3.0), p_calc_(p_calc) {
             setSize(nx, ny);
         }
         virtual bool calculatePotentials(unsigned char* costs, double start_x, double start_y, double end_x, double end_y,
