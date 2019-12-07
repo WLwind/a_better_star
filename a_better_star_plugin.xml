@@ -1,0 +1,7 @@
+<library path="lib/liba_better_star">
+  <class name="a_better_star/GlobalPlanner" type="a_better_star::GlobalPlanner" base_class_type="nav_core::BaseGlobalPlanner">
+    <description>
+      A better A* global planner.
+    </description>
+  </class>
+</library>
