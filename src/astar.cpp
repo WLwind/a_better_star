@@ -1,6 +1,6 @@
-#include<a_better_star/astar.h>
-#include<costmap_2d/cost_values.h>
-#include<cmath>
+#include <a_better_star/astar.h>
+#include <costmap_2d/cost_values.h>
+#include <cmath>
 
 namespace a_better_star
 {
@@ -54,8 +54,10 @@ void AStarExpansion::add(unsigned char* costs, float* potential, float prev_pote
 
     potential[next_i] = p_calc_->calculatePotential(potential, costs[next_i] + neutral_cost_, next_i, prev_potential);//g(n)=costs[next_i]+neutral_cost_+prev_potential
     int x = next_i % nx_, y = next_i / nx_;
-    float distance = hypot(abs(end_x - x),abs(end_y - y));//Heuristics h(n)
-
+//    float distance = hypot(abs(end_x - x),abs(end_y - y));//Heuristics h(n)=Euclidean distance
+    float distance = m_fed.calculateEuclideanDistance(abs(end_x - x),abs(end_y - y));
+    if(distance<0)
+        distance=0;
     queue_.push_back(Index(next_i, potential[next_i] + distance * neutral_cost_));//f(n)=g(n)+h(n)
     std::push_heap(queue_.begin(), queue_.end(), greater1());
 }
