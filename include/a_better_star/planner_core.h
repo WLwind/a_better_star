@@ -23,8 +23,8 @@ class Expander;//Forward declaration
 class GridPath;
 
 /**
- * @class ABetterStar
- * @brief Provides a ROS wrapper for the global_planner planner which runs a fast, interpolated navigation function on a costmap.
+ * @class GlobalPlanner
+ * @brief Provides a ROS wrapper for the a_better_star planner which is a modification of official global_planner.
  */
 
 class GlobalPlanner : public nav_core::BaseGlobalPlanner
@@ -44,7 +44,7 @@ public:
     GlobalPlanner(std::string name, costmap_2d::Costmap2D* costmap, std::string frame_id);
 
     /**
-    * @brief  Default deconstructor for the PlannerCore object
+    * @brief  Default destructor for the PlannerCore object
     */
     ~GlobalPlanner();
 
@@ -125,7 +125,9 @@ public:
     * @brief  Publish a path for visualization purposes
     */
     void publishPlan(const std::vector<geometry_msgs::PoseStamped>& path);
-
+    /**
+    * @brief  A ROS service server for making a new global plan
+    */
     bool makePlanService(nav_msgs::GetPlan::Request& req, nav_msgs::GetPlan::Response& resp);
 
 protected:
@@ -165,7 +167,10 @@ private:
     bool old_navfn_behavior_;
     float convert_offset_;
 
-    dynamic_reconfigure::Server<GlobalPlannerConfig> *dsrv_;
+    dynamic_reconfigure::Server<GlobalPlannerConfig> *dsrv_;//dynamic configuration server
+    /**
+    * @brief Dynamic configuration callback function
+    */
     void reconfigureCB(GlobalPlannerConfig &config, uint32_t level);
 
 };

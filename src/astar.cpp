@@ -23,8 +23,8 @@ bool AStarExpansion::calculatePotentials(unsigned char* costs, double start_x, d
 
     while (queue_.size() > 0 && cycle < cycles) {
         Index top = queue_[0];//get the lowest f(n)
-        std::pop_heap(queue_.begin(), queue_.end(), greater1());
-        queue_.pop_back();//put is into the close list
+        std::pop_heap(queue_.begin(), queue_.end(), greater1());//put the lowest f(n) to the last place and find the second lowest f(n) and put it to the first place
+        queue_.pop_back();//remove the last point from the open list (put it into the close list)
 
         int i = top.i;
         if (i == goal_i)
@@ -79,12 +79,17 @@ void AStarExpansion::add(unsigned char* costs, float* potential, float prev_pote
     if(new_point_in_open_list)//add a new element to the open list
     {
         queue_.push_back(Index(next_i, potential[next_i] + distance * neutral_cost_));//f(n)=g(n)+h(n)
+        std::push_heap(queue_.begin(), queue_.end(), greater1());//add the new point, find the lowest f(n) and put it to the first place
     }
     else if(need_to_update)//update f(n) of an exsted element
     {
         queue_[no].cost=potential[next_i] + distance * neutral_cost_;
+        if(!std::is_heap(queue_.begin(), queue_.end(), greater1()))//need to remake the heap
+        {
+            std::make_heap(queue_.begin(), queue_.end(), greater1());//find the lowest f(n) and put it to the first place
+        }
     }
-    std::push_heap(queue_.begin(), queue_.end(), greater1());//find the lowest f(n)
+    return;
 }
 
 bool AStarExpansion::isInOpen(int index,size_t& no)
