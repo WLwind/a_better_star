@@ -14,8 +14,8 @@ class Index {
             i = a;
             cost = b;
         }
-        int i;
-        float cost;
+        int i;//index
+        float cost;//f(n)
 };
 
 struct greater1 {
@@ -27,10 +27,17 @@ struct greater1 {
 class AStarExpansion : public Expander {
     public:
         AStarExpansion(PotentialCalculator* p_calc, int nx, int ny);
-        bool calculatePotentials(unsigned char* costs, double start_x, double start_y, double end_x, double end_y, int cycles, float* potential);
+        bool calculatePotentials(unsigned char* costs, double start_x, double start_y, double end_x, double end_y, int cycles, float* potential) override;
     private:
         void add(unsigned char* costs, float* potential, float prev_potential, int next_i, int end_x, int end_y);
-        std::vector<Index> queue_;//f(n)
+        /**
+        * @brief Discriminate whether the point is in the open list
+        * @param index The index of the point in the grid map
+        * @param no The index of the point in queue_ (the open list instance)
+        * @return True if the point is in the open list, otherwise false
+        */
+        bool isInOpen(int index,size_t& no);
+        std::vector<Index> queue_;//f(n) of the open list
         FastEuclideanDistance m_fed{128};//to calculate Euclidean distance
 };
 

@@ -15,7 +15,7 @@ bool AStarExpansion::calculatePotentials(unsigned char* costs, double start_x, d
     int start_i = toIndex(start_x, start_y);
     queue_.push_back(Index(start_i, 0));
 
-    std::fill(potential, potential + ns_, POT_HIGH);
+    std::fill(potential, potential + ns_, POT_HIGH);//initialize all potentials with the biggest number
     potential[start_i] = 0;
 
     int goal_i = toIndex(end_x, end_y);
@@ -46,20 +46,59 @@ void AStarExpansion::add(unsigned char* costs, float* potential, float prev_pote
     if (next_i < 0 || next_i >= ns_)//out of map
         return;
 
-    if (potential[next_i] < POT_HIGH)//in open list or close list
-        return;
-
     if(costs[next_i]>=lethal_cost_ && !(unknown_ && costs[next_i]==costmap_2d::NO_INFORMATION))//obstacles
         return;
 
-    potential[next_i] = p_calc_->calculatePotential(potential, costs[next_i] + neutral_cost_, next_i, prev_potential);//g(n)=costs[next_i]+neutral_cost_+prev_potential
+    bool new_point_in_open_list=false;
+    bool need_to_update=false;
+    size_t no;
+    if(potential[next_i]<POT_HIGH)//is in open or closed
+    {
+        if(isInOpen(next_i,no))//is in open
+        {
+            float new_potential = p_calc_->calculatePotential(potential, costs[next_i] + neutral_cost_, next_i, prev_potential);//g(n)=costs[next_i]+neutral_cost_+prev_potential
+            if(new_potential<potential[next_i])//new g(n) is lower than the previous one
+            {
+                need_to_update=true;
+                potential[next_i]=new_potential;//update g(n)
+            }
+        }
+    }
+    else
+    {
+        new_point_in_open_list=true;
+        potential[next_i]=p_calc_->calculatePotential(potential, costs[next_i] + neutral_cost_, next_i, prev_potential);
+    }
+    if(need_to_update==false&&new_point_in_open_list==false)//no need to calculate h(n) and f(n)
+        return;
     int x = next_i % nx_, y = next_i / nx_;
 //    float distance = hypot(abs(end_x - x),abs(end_y - y));//Heuristics h(n)=Euclidean distance
     float distance = m_fed.calculateEuclideanDistance(abs(end_x - x),abs(end_y - y));
     if(distance<0)
         distance=0;
-    queue_.push_back(Index(next_i, potential[next_i] + distance * neutral_cost_));//f(n)=g(n)+h(n)
-    std::push_heap(queue_.begin(), queue_.end(), greater1());
+    if(new_point_in_open_list)//add a new element to the open list
+    {
+        queue_.push_back(Index(next_i, potential[next_i] + distance * neutral_cost_));//f(n)=g(n)+h(n)
+    }
+    else if(need_to_update)//update f(n) of an exsted element
+    {
+        queue_[no].cost=potential[next_i] + distance * neutral_cost_;
+    }
+    std::push_heap(queue_.begin(), queue_.end(), greater1());//find the lowest f(n)
+}
+
+bool AStarExpansion::isInOpen(int index,size_t& no)
+{
+    size_t size_of_queue=queue_.size();
+    for(size_t i=0;i<size_of_queue;i++)
+    {
+        if(queue_[i].i==index)
+        {
+            no=i;
+            return true;
+        }
+    }
+    return false;
 }
 
 } //end namespace

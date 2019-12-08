@@ -10,12 +10,12 @@ class FastEuclideanDistance
 {
 public:
     /**
-    * @brief Construction
-    * @param resolution Size of the std::map
+    * @brief Constructor
+    * @param resolution Size of the map for looking up the approximate Euclidean distance
     */
     FastEuclideanDistance(int resolution=128);
     /**
-    * @brief Destruction
+    * @brief Destructor
     */
     virtual ~FastEuclideanDistance(){};
     /**
@@ -73,7 +73,7 @@ public:
 private:
     std::map<double,double> m_proportion_lookup;//{x/y : y/(x^2+y^2)^0.5}
     int m_resolution;//Size of the std::map
-    double m_sqr2{std::sqrt(2.0)};
+    double m_sqr2{std::sqrt(2.0)};//2^0.5
 };
 
 }//end namespace
