@@ -7,6 +7,9 @@ namespace a_better_star
 
 AStarExpansion::AStarExpansion(PotentialCalculator* p_calc, int xs, int ys):Expander(p_calc, xs, ys)
 {
+    ros::NodeHandle private_nh("~/FastEuclideanDistance");
+    private_nh.param("fast_euclidean_resolution",m_fed_resolution,64);
+    m_fed_ptr.reset(new a_better_star::FastEuclideanDistance(m_fed_resolution));
 }
 
 bool AStarExpansion::calculatePotentials(unsigned char* costs, double start_x, double start_y, double end_x, double end_y, int cycles, float* potential)
@@ -73,7 +76,7 @@ void AStarExpansion::add(unsigned char* costs, float* potential, float prev_pote
         return;
     int x = next_i % nx_, y = next_i / nx_;
 //    float distance = hypot(abs(end_x - x),abs(end_y - y));//Heuristics h(n)=Euclidean distance
-    float distance = m_fed.calculateEuclideanDistance(abs(end_x - x),abs(end_y - y));
+    float distance = m_fed_ptr->calculateEuclideanDistance(abs(end_x - x),abs(end_y - y));
     if(distance<0)
         distance=0;
     if(new_point_in_open_list)//add a new element to the open list

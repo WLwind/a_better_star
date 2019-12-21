@@ -38,7 +38,8 @@ class AStarExpansion : public Expander {
         */
         bool isInOpen(int index,size_t& no);
         std::vector<Index> queue_;//f(n) of the open list
-        FastEuclideanDistance m_fed{128};//to calculate Euclidean distance
+        std::unique_ptr<a_better_star::FastEuclideanDistance> m_fed_ptr;//to calculate Euclidean distance
+        int m_fed_resolution{64};//resolution of fast Euclidean distance
 };
 
 } //end namespace

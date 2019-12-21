@@ -17,3 +17,6 @@ GlobalPlanner:                                  # Also see: http://wiki.ros.org/
   neutral_cost: 5                               # default 50
   cost_factor: 3.0                              # Factor to multiply each cost from costmap by, default 3.0
   publish_potential: true                       # Publish Potential Costmap (this is not like the navfn pointcloud2 potential), default true
+
+FastEuclideanDistance:  
+  fast_euclidean_resolution: 64                 # resolution of fast Euclidean distance approximate, default 64
